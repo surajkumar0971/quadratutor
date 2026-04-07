@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quadratutor Workspace</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <div class="topbar-left">
+                <div class="brand-mark">Q</div>
+                <div>
+                    <p class="eyebrow">AI Study Assistant</p>
+                    <h1 class="brand-title">Quadratutor</h1>
+                </div>
+            </div>
+
+            <div class="topbar-center">
+                <span id="currentScreenLabel" class="screen-pill">Chat Session</span>
+            </div>
+
+            <div class="topbar-right">
+                <button class="ghost-button compact-button" id="speakToggleBtn" type="button">Voice Reply On</button>
+                <div class="menu-shell">
+                    <button id="menuToggleBtn" class="menu-toggle" type="button" aria-expanded="false" aria-label="Open features menu">...</button>
+                    <div id="featureMenu" class="feature-menu" hidden>
+                        <button class="nav-item active" data-screen="chatScreen" type="button">Chat Session</button>
+                        <button class="nav-item" data-screen="notesScreen" type="button">Notes Generator</button>
+                        <button class="nav-item" data-screen="quizScreen" type="button">Quiz Generator</button>
+                        <button class="nav-item" data-screen="assignmentScreen" type="button">Assignment Generator</button>
+                        <button class="nav-item" data-screen="libraryScreen" type="button">Library System</button>
+                        <button class="nav-item" data-screen="youtubeScreen" type="button">YouTube Study</button>
+                        <button class="nav-item" data-screen="historyScreen" type="button">History</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="content-shell">
+            <section id="chatScreen" class="screen active">
+                <section class="chat-home">
+                    <div class="chat-home-copy">
+                        <h2>What can I help you learn today?</h2>
+                        <p class="chat-home-subtitle">Ask a question, generate notes, create quizzes, build assignments, or study from YouTube in one clean workspace.</p>
+                    </div>
+
+                    <div class="prompt-grid">
+                        <button class="prompt-chip" type="button" data-prompt="Explain photosynthesis in simple English">Explain a concept</button>
+                        <button class="prompt-chip" type="button" data-screen-target="notesScreen">Generate notes</button>
+                        <button class="prompt-chip" type="button" data-screen-target="quizScreen">Create a quiz</button>
+                        <button class="prompt-chip" type="button" data-screen-target="assignmentScreen">Make assignment answers</button>
+                    </div>
+
+                    <div id="chat" class="chat-board">
+                        <article class="message bot">
+                            <span class="message-role">Quadratutor</span>
+                            <p>Welcome back. Ask any question and get a clear direct answer.</p>
+                        </article>
+                    </div>
+
+                    <div class="chat-composer-shell">
+                        <div class="composer-tools">
+                            <button id="composerMenuBtn" class="ghost-button plus-button" type="button" aria-expanded="false" aria-label="Open chat options">+</button>
+                            <div id="composerMenu" class="composer-menu" hidden>
+                                <select id="languageSelect">
+                                    <option value="hinglish">Hinglish</option>
+                                    <option value="english">English</option>
+                                    <option value="hindi">Hindi</option>
+                                </select>
+                                <select id="replyModeSelect">
+                                    <option value="both">Text + Voice</option>
+                                    <option value="text">Text Only</option>
+                                    <option value="voice">Voice Only</option>
+                                </select>
+                                <button class="ghost-button compact-button" id="openTeachPanelBtn" type="button">Teach This Answer</button>
+                                <button class="ghost-button compact-button" id="clearChatBtn" type="button">Clear Chat</button>
+                            </div>
+                        </div>
+                        <div class="composer chatgpt-composer">
+                            <input id="input" type="text" placeholder="Message Quadratutor">
+                            <button id="voiceBtn" class="ghost-button compact-button" type="button">Voice</button>
+                            <button id="sendBtn" type="button">Send</button>
+                        </div>
+                    </div>
+
+                    <section id="teachPanel" class="teach-panel" hidden>
+                        <div class="teach-panel-header">
+                            <div>
+                                <p class="eyebrow">Teach Mode</p>
+                                <h3>Save Correct Answer</h3>
+                            </div>
+                            <button id="closeTeachPanelBtn" class="ghost-button compact-button" type="button">Close</button>
+                        </div>
+                        <p id="teachQuestionLabel" class="teach-question-label">Ask a question first, then teach the correct answer here.</p>
+                        <textarea id="teachAnswerInput" class="large-input teach-answer-input" placeholder="Type the correct answer you want to save for this question..."></textarea>
+                        <div class="action-row">
+                            <button id="saveTeachBtn" type="button">Save Answer</button>
+                        </div>
+                    </section>
+                </section>
+            </section>
+
+            <section id="notesScreen" class="screen">
+                <div class="panel-grid">
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Revision Builder</p>
+                                <h3>Notes Generator</h3>
+                            </div>
+                        </div>
+                        <textarea id="notesInput" class="large-input" placeholder="Paste chapter text, lecture content, or any study material here..."></textarea>
+                        <div class="action-row">
+                            <button id="generateNotesBtn" type="button">Generate Notes</button>
+                            <button id="downloadNotesPdfBtn" class="ghost-button" type="button">Download Notes PDF</button>
+                        </div>
+                        <div class="upload-panel">
+                            <p class="upload-title">Simplify Complex PDF Notes</p>
+                            <input id="pdfFile" type="file" accept=".pdf">
+                            <button id="simplifyPdfBtn" class="ghost-button" type="button">Upload PDF and Simplify</button>
+                        </div>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Study Output</p>
+                                <h3>Structured Notes</h3>
+                            </div>
+                        </div>
+                        <div id="notesOutput" class="result-panel empty-state">
+                            Notes will appear here as key points, summary, and keywords.
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            <section id="quizScreen" class="screen">
+                <div class="panel-grid">
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Practice Mode</p>
+                                <h3>Quiz Generator</h3>
+                            </div>
+                        </div>
+                        <textarea id="quizInput" class="large-input" placeholder="Paste text here to automatically create a separate multiple-choice quiz..."></textarea>
+                        <div class="quiz-toolbar">
+                            <label class="quiz-count-control" for="quizCountInput">
+                                <span>Quiz Count</span>
+                                <input id="quizCountInput" type="number" min="1" max="100" value="5">
+                            </label>
+                            <label class="quiz-count-control" for="quizModeInput">
+                                <span>Quiz Mode</span>
+                                <select id="quizModeInput">
+                                    <option value="mixed">Mixed</option>
+                                    <option value="mcq">MCQ</option>
+                                    <option value="true_false">True / False</option>
+                                    <option value="fill_blank">Fill in the Blanks</option>
+                                </select>
+                            </label>
+                            <label class="quiz-count-control" for="quizDifficultyInput">
+                                <span>Difficulty</span>
+                                <select id="quizDifficultyInput">
+                                    <option value="easy">Easy</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="hard">Hard</option>
+                                </select>
+                            </label>
+                            <div class="upload-panel quiz-upload-panel">
+                                <input id="quizPdfFile" type="file" accept=".pdf">
+                                <button id="generateQuizFromPdfBtn" class="ghost-button" type="button">Upload PDF for Quiz</button>
+                            </div>
+                        </div>
+                        <div class="action-row">
+                            <button id="generateQuizBtn" type="button">Generate Quiz</button>
+                            <button id="checkQuizBtn" class="ghost-button" type="button">Submit Quiz</button>
+                            <button id="clearQuizBtn" class="ghost-button" type="button">Clear Quiz</button>
+                        </div>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Assessment Output</p>
+                                <h3>Generated Quiz</h3>
+                            </div>
+                        </div>
+                        <div id="quizOutput" class="result-panel empty-state">
+                            Generated quiz questions will appear here.
+                        </div>
+                        <div id="scoreOutput" class="score-card">Score: 0/0</div>
+                    </section>
+                </div>
+            </section>
+
+            <section id="assignmentScreen" class="screen">
+                <div class="panel-grid">
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Notebook Writer</p>
+                                <h3>AI Assignment Generator</h3>
+                            </div>
+                        </div>
+                        <div class="quiz-toolbar">
+                            <label class="quiz-count-control" for="assignmentLevelInput">
+                                <span>Assignment Level</span>
+                                <select id="assignmentLevelInput">
+                                    <option value="school">School</option>
+                                    <option value="college">College</option>
+                                </select>
+                            </label>
+                            <label class="quiz-count-control" for="assignmentQuestionCountInput">
+                                <span>Question Count</span>
+                                <input id="assignmentQuestionCountInput" type="number" min="1" max="20" value="5">
+                            </label>
+                            <div class="upload-panel quiz-upload-panel">
+                                <input id="assignmentSourceFile" type="file" accept=".pdf,.txt">
+                                <button id="generateAssignmentQuestionsBtn" class="ghost-button" type="button">Upload Syllabus/Notes</button>
+                            </div>
+                        </div>
+                        <textarea id="assignmentInput" class="large-input" placeholder="Paste multiple assignment questions here...
+Q1. What is photosynthesis?
+Q2. Explain Newton's laws."></textarea>
+                        <div class="action-row">
+                            <button id="generateAssignmentBtn" type="button">Generate Assignment</button>
+                            <button id="downloadAssignmentPdfBtn" class="ghost-button" type="button">Download Assignment PDF</button>
+                        </div>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Notebook Preview</p>
+                                <h3>Assignment Output</h3>
+                            </div>
+                        </div>
+                        <div id="assignmentOutput" class="result-panel empty-state">
+                            Assignment questions and medium-length answers will appear here in notebook style.
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+
+            <section id="libraryScreen" class="screen">
+                <section class="panel library-shell">
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow">Student Material Hub</p>
+                            <h3>Library System</h3>
+                        </div>
+                    </div>
+
+                    <div class="library-session-switch">
+                        <button class="library-session-tab active" type="button" data-library-session="uploadSession">Upload Session</button>
+                        <button class="library-session-tab" type="button" data-library-session="accessSession">Access Library</button>
+                    </div>
+
+                    <section id="uploadSession" class="library-session active">
+                        <div class="panel-grid library-grid">
+                            <section class="panel library-subpanel">
+                                <div class="panel-header">
+                                    <div>
+                                        <p class="eyebrow">Upload Material</p>
+                                        <h3>Notes and Question Paper Upload</h3>
+                                    </div>
+                                </div>
+
+                                <div class="library-upload-form">
+                                    <input id="libraryTitleInput" type="text" placeholder="Title, for example: CBSE Class 12 Math Notes">
+                                    <div class="library-filter-row">
+                                        <input id="libraryBoardInput" type="text" placeholder="Board or university">
+                                        <input id="libraryClassInput" type="text" placeholder="Class, semester, or course">
+                                    </div>
+                                    <div class="library-filter-row">
+                                        <input id="librarySubjectInput" type="text" placeholder="Subject, for example: Math or CS">
+                                        <select id="libraryTypeInput">
+                                            <option value="Notes">Notes</option>
+                                            <option value="Question Paper">Question Paper</option>
+                                            <option value="Syllabus">Syllabus</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                    <input id="libraryFileInput" type="file" accept=".pdf,.txt,.png,.jpg,.jpeg,.webp,.doc,.docx,.ppt,.pptx">
+                                    <button id="libraryUploadBtn" type="button">Upload to Library</button>
+                                </div>
+                            </section>
+
+                            <section class="panel library-subpanel">
+                                <div class="panel-header">
+                                    <div>
+                                        <p class="eyebrow">Upload Help</p>
+                                        <h3>Easy Session Flow</h3>
+                                    </div>
+                                </div>
+                                <div class="library-info-stack">
+                                    <div class="library-info-card">
+                                        <strong>1. Add details</strong>
+                                        <p>Student title, board, class, subject, and type fill karega.</p>
+                                    </div>
+                                    <div class="library-info-card">
+                                        <strong>2. Upload file</strong>
+                                        <p>Notes, question paper, syllabus, ya other study file upload hogi.</p>
+                                    </div>
+                                    <div class="library-info-card">
+                                        <strong>3. Auto save in library</strong>
+                                        <p>File baad me alag access session me search, read, aur download ho jayegi.</p>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </section>
+
+                    <section id="accessSession" class="library-session">
+                        <div class="panel-grid library-grid">
+                            <section class="panel library-subpanel">
+                                <div class="panel-header inline-header">
+                                    <div>
+                                        <p class="eyebrow">Read and Filter</p>
+                                        <h3>Access Library</h3>
+                                    </div>
+                                </div>
+                                <div class="library-search-panel library-search-panel-inline">
+                                    <input id="librarySearchInput" type="text" placeholder="Search by title, board, class, university, or subject">
+                                    <div class="library-filter-row">
+                                        <input id="libraryFilterSubject" type="text" placeholder="Filter by subject">
+                                        <input id="libraryFilterBoard" type="text" placeholder="Filter by board or university">
+                                    </div>
+                                    <div class="library-filter-row">
+                                        <input id="libraryFilterClass" type="text" placeholder="Filter by class or semester">
+                                        <select id="libraryFilterType">
+                                            <option value="">All material types</option>
+                                            <option value="Notes">Notes</option>
+                                            <option value="Question Paper">Question Paper</option>
+                                            <option value="Syllabus">Syllabus</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="action-row">
+                                        <button id="librarySearchBtn" type="button">Search</button>
+                                        <button id="libraryResetBtn" class="ghost-button" type="button">Reset</button>
+                                    </div>
+                                </div>
+
+                                <div id="libraryList" class="library-list empty-state">
+                                    <p>No library files yet. Upload notes or question papers to get started.</p>
+                                </div>
+                            </section>
+
+                            <section class="panel library-subpanel">
+                                <div class="panel-header">
+                                    <div>
+                                        <p class="eyebrow">Reader</p>
+                                        <h3>Read and Download</h3>
+                                    </div>
+                                </div>
+                                <div id="libraryReader" class="library-reader empty-state">
+                                    <p>Select a library file to preview and read it here.</p>
+                                </div>
+                            </section>
+                        </div>
+                    </section>
+                </section>
+            </section>
+
+            <section id="youtubeScreen" class="screen">
+                <div class="panel-grid">
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Video Learning</p>
+                                <h3>YouTube Study Panel</h3>
+                            </div>
+                        </div>
+
+                        <div class="youtube-form">
+                            <input type="text" id="ytLink" placeholder="Paste a YouTube link here">
+                            <label class="quiz-count-control" for="ytQuizCountInput">
+                                <span>Quiz Count</span>
+                                <input id="ytQuizCountInput" type="number" min="1" max="50" value="5">
+                            </label>
+                            <div class="action-row">
+                                <button id="ytTranscriptBtn" type="button">Get Transcript</button>
+                                <button id="ytQuizBtn" class="ghost-button" type="button">Generate Video Quiz</button>
+                            </div>
+                        </div>
+
+                        <textarea id="ytTranscript" class="large-input" placeholder="Video transcript will appear here..."></textarea>
+
+                        <div class="video-shell">
+                            <div id="videoCard" class="video-card">
+                                <div class="video-thumb">
+                                    <span>Video Preview</span>
+                                </div>
+                                <div class="video-meta">
+                                    <h4>Ready for a YouTube-style study session</h4>
+                                    <p>Add a video link to create notes or quiz prompts around the topic.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Output</p>
+                                <h3>Video Notes / Quiz</h3>
+                            </div>
+                            <button id="downloadYtPdfBtn" class="ghost-button" type="button">Download PDF</button>
+                        </div>
+                        <div id="ytOutput" class="result-panel empty-state">
+                            YouTube study notes or quiz content will appear here.
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            <section id="historyScreen" class="screen">
+                <section class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow">Saved Activity</p>
+                            <h3>History</h3>
+                        </div>
+                        <button id="clearHistoryBtn" class="ghost-button" type="button">Clear History</button>
+                    </div>
+                    <div id="historyList" class="history-list">
+                        <div class="history-empty">No history saved yet.</div>
+                    </div>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
